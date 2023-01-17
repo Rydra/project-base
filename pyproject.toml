@@ -1,0 +1,96 @@
+[tool.poetry]
+name = "sample-api"
+version = "1.4.0"
+description = ""
+authors = ["David <davigetto@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pytz = "^2019.1"
+python-slugify = "^3.0.2"
+argon2-cffi = "^19.1.0"
+redis = "^3.2.1"
+django-environ = "0.4.5"
+django-model-utils = "3.1.2"
+coreapi = "^2.3.3"
+gunicorn = "^19.9.0"
+psycopg2-binary = "^2.9.0"
+Collectfast = "0.6.2"
+flake8 = "^3.7.7"
+coverage = "^4.5.3"
+black = "^19.3b0"
+pylint-django = "^2.0.9"
+factory-boy = "^2.12.0"
+django-debug-toolbar = "^1.11.1"
+pydash = "^5.1.0"
+pydantic = "^1.10.2"
+pinject = "^0.14.1"
+singleton-py3 = "^0.2.1"
+funcy = "^1.17"
+fastapi = "^0.88.0"
+fastapi-utils = "^0.2.1"
+uvicorn = "^0.20.0"
+httpx = "^0.23.1"
+Django = "^4.1.4"
+pysettings-yaml = "^0.1.2"
+pymongo = {extras = ["srv"], version = "^4.3.3"}
+motor = "^3.1.1"
+strawberry-graphql = {extras = ["debug-server"], version = "^0.151.2"}
+aiocache = {extras = ["redis"], version = "^0.11.1"}
+aioredis = "<2.0"
+pyvaru = {git = "https://github.com/Rydra/pyvaru"}
+Babel = "^2.11.0"
+python-multipart = "^0.0.5"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+pytest-sugar = "^0.9.4"
+pytest-django = "^4.5.2"
+PyHamcrest = "^2.0.3"
+doublex = "^1.9.3"
+
+[tool.black]
+line-length = 88
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.django"
+
+# I don't exactly know why, but if I don't add the contexts folder... it won't work
+markers = [
+    "acceptancetest: marks a test as an acceptance test",
+    "documentation",
+    "integrationtest"
+]
+python_paths = "src"
+norecursedirs = ".cache dumps *.egg-info .git appdir .tox"
+
+
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "1.4.0"
+tag_format = "$version"
+version_files = [
+    "pyproject.toml:version"
+]
+annotated_tag = true
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
