@@ -6,7 +6,7 @@ from starlette.testclient import TestClient
 
 from config.settings import settings
 from main import app
-from tests.stubs import SampleMother
+from tests.integration.stubs import SampleMother
 
 
 @pytest.fixture
