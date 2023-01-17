@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "sample-api"
+name = "project-base"
 version = "1.4.0"
 description = ""
 authors = ["David <davigetto@gmail.com>"]
@@ -47,7 +47,6 @@ passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
 pytest-sugar = "^0.9.4"
-pytest-django = "^4.5.2"
 PyHamcrest = "^2.0.3"
 doublex = "^1.9.3"
 
@@ -69,8 +68,6 @@ exclude = '''
 '''
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "config.django"
-
 # I don't exactly know why, but if I don't add the contexts folder... it won't work
 markers = [
     "acceptancetest: marks a test as an acceptance test",
@@ -79,7 +76,6 @@ markers = [
 ]
 python_paths = "src"
 norecursedirs = ".cache dumps *.egg-info .git appdir .tox"
-
 
 
 [tool.commitizen]

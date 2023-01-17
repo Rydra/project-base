@@ -20,7 +20,7 @@ ARG POETRY_ENV=production
 COPY install-packages.sh .
 RUN chmod +x install-packages.sh && ./install-packages.sh
 
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | POETRY_VERSION=1.1.8 python -
+RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | POETRY_VERSION=1.3.2 python -
 
 # Requirements are installed here to ensure they will be cached.
 WORKDIR /tmp
@@ -28,11 +28,11 @@ COPY poetry.lock pyproject.toml /tmp/
 RUN POETRY_VIRTUALENVS_CREATE=false "/root/.local/bin/poetry" install $(if [ "$POETRY_ENV" = 'production' ]; then echo '--no-dev'; fi)
 
 
-COPY ./compose/local/django/entrypoint /entrypoint
+COPY ./compose/entrypoint /entrypoint
 RUN sed -i 's/\r//' /entrypoint
 RUN chmod +x /entrypoint
 
-COPY ./compose/local/django/start /start
+COPY ./compose/start /start
 RUN sed -i 's/\r//' /start
 RUN chmod +x /start
 

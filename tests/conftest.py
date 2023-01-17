@@ -6,11 +6,6 @@ from contexts.shared.anyio import async_to_sync
 from contexts.shared.cache import init_cache
 
 
-@pytest.fixture(autouse=True)
-def media_storage(settings, tmpdir):
-    settings.MEDIA_ROOT = tmpdir.strpath
-
-
 @pytest.fixture
 def request_factory() -> RequestFactory:
     return RequestFactory()

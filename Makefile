@@ -1,5 +1,5 @@
 build:
-	DOCKER_BUILDKIT=1 docker build -f compose/local/django/Dockerfile . -t sample_py --force-rm --compress
+	DOCKER_BUILDKIT=1 docker build -f compose/Dockerfile . -t sample_py --force-rm --compress
 
 up:
 	docker compose --profile app --profile infra up --remove-orphans --quiet-pull
