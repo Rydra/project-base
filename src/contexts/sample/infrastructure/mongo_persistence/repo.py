@@ -3,7 +3,7 @@ import logging
 from bson import ObjectId
 from bson.errors import InvalidId
 from motor.core import AgnosticDatabase
-from pymongo import InsertOne, ReplaceOne
+from pymongo import InsertOne, UpdateOne
 
 from contexts.sample.core.domain.domain import Sample
 from contexts.sample.core.domain.interfaces import ISampleRepository
@@ -18,25 +18,35 @@ class MongoSampleRepository(ISampleRepository):
     def __init__(self, database: AgnosticDatabase, session: Session) -> None:
         self.session = session
         self.sample_collection = database.sample_collection
+        self.seen: set[Id] = set()
 
     async def aall(self) -> list[Sample]:
-        return [self._to_domain(d) async for d in self.sample_collection.find()]
+        items = [self._to_domain(d) async for d in self.sample_collection.find()]
+        self.seen.union(set(i.id for i in items))
+        return items
 
     def next_id(self) -> Id:
         return str(ObjectId())
 
     async def asave(self, sample: Sample) -> None:
-        sample_dict = {
-            "reference": sample.reference,
-        }
+        sample_dict = {"reference": sample.reference, "version": sample.version + 1}
 
         if not sample.id:
             self.session.add_operation(self.sample_collection, InsertOne(sample_dict))
         else:
-            self.session.add_operation(
-                self.sample_collection,
-                ReplaceOne({"_id": ObjectId(sample.id)}, sample_dict, upsert=True),
-            )
+            if sample.id in self.seen:
+                self.session.add_operation(
+                    self.sample_collection,
+                    UpdateOne(
+                        {"_id": ObjectId(sample.id), "version": sample.version},
+                        {"$set": sample_dict},
+                    ),
+                )
+            else:
+                self.session.add_operation(
+                    self.sample_collection,
+                    InsertOne({"_id": ObjectId(sample.id), **sample_dict}),
+                )
 
     async def count(self) -> int:
         return await self.sample_collection.count_documents({})
@@ -50,10 +60,13 @@ class MongoSampleRepository(ISampleRepository):
         if not document:
             raise NotFound()
 
-        return self._to_domain(document)
+        item = self._to_domain(document)
+        self.seen.add(id)
+        return item
 
     def _to_domain(self, document: dict) -> Sample:
         return Sample(
             id=str(document["_id"]),
             reference=document["reference"],
+            version=document["version"],
         )

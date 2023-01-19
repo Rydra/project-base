@@ -25,12 +25,9 @@ def create_reference() -> str:
 
 
 class Sample:
-    def __init__(
-        self,
-        id: Id | None,
-        reference: str,
-    ):
+    def __init__(self, id: Id | None, reference: str, version: int = 1):
         self.id = id
+        self.version = version
         self.reference = reference
 
     @staticmethod

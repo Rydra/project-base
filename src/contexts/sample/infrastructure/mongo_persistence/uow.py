@@ -15,10 +15,10 @@ class MongoUnitOfWork(IUnitOfWork):
         self.cache_provider = cache_provider
 
     async def __aenter__(self) -> "MongoUnitOfWork":
-        client = AsyncIOMotorClient(settings.mongodb_dsm)
+        self.client = AsyncIOMotorClient(settings.mongodb_dsm)
         self.session = Session()
         self.samples = MongoSampleRepository(
-            client[settings.mongo_dbname], self.session
+            self.client[settings.mongo_dbname], self.session
         )
         if settings.use_cache:
             self.samples = CachedRepository(
@@ -30,7 +30,9 @@ class MongoUnitOfWork(IUnitOfWork):
         await super().__aexit__(*args)
 
     async def commit(self) -> None:
-        await self.session.commit()
+        session = await self.client.start_session()
+        async with session.start_transaction():
+            await self.session.commit()
 
     async def rollback(self) -> None:
         pass
